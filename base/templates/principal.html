@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Nexus Store Listagem</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .item-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .item {
+            width: calc(25% - 20px);
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+
+        .item img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-price {
+            flex-grow: 1;
+        }
+
+        .more-info-link {
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            max-width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .popup-close {
+            text-align: right;
+        }
+
+        .input-quantidade {
+            width: 25px;
+        }
+
+        .cart-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cart-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cart-icon {
+            font-size: 24px;
+            margin-right: 5px;
+        }
+
+        .cart-count {
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 50%;
+        }
+
+        .cart-item {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 900px) {
+            .item {
+                width: calc(33.33% - 20px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Nexus Store</h1>
+    <div class="cart-container" onclick="toggleCart()">
+        <div class="cart-header">
+            <span class="cart-icon">&#128722;</span>
+            <span class="cart-count" id="cart-count">0</span>
+        </div>
+        <ul id="cart-items" style="display: none;">
+        </ul>
+    </div>
+    <ul class="item-list">
+        {% block content %}
+        {% for item in itens %}
+        <li class="item">
+            {% if item.imagem %}
+                <img src="{{ item.imagem.url }}" alt="Imagem do Item">
+            {% endif %}<br>
+            <div class="item-details">
+                <div>
+                    <strong>Descrição:</strong> {{ item.descricao }}<br>
+                </div>
+                <div>
+                    <strong>Quantidade:</strong> <input class="input-quantidade" type="number" name="quantidade" min="0" value="0">
+                    <button class="add-to-cart" data-item="{{ item.descricao }}">+</button>
+                </div>
+            </div>
+            <div class="item-details">
+                <strong>Preço:</strong> R$ {{ item.preco }}<br>
+                <div class="more-info-link" onclick="openPopup('popup-{{ forloop.counter }}')">Mais informações</div>
+            </div>
+            <div id="popup-{{ forloop.counter }}" class="popup-overlay">
+                <div class="popup-content">
+                    <div class="popup-close">
+                        <a onclick="closePopup('popup-{{ forloop.counter }}')">Fechar</a>
+                    </div>
+                    <strong>Tamanho:</strong> {{ item.tamanho }}<br>
+                    <strong>Cor:</strong> {{ item.cor }}<br>
+                    <strong>Descrição Técnica:</strong> {{ item.descricao_tecnica }}<br>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+        {% endblock %}
+    </ul>
+
+    <script>
+        function openPopup(popupId) {
+            var popup = document.getElementById(popupId);
+            popup.style.display = "flex";
+        }
+
+        function closePopup(popupId) {
+            var popup = document.getElementById(popupId);
+            popup.style.display = "none";
+        }
+
+        var addToCartButtons = document.querySelectorAll('.add-to-cart');
+        addToCartButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var itemDescription = button.dataset.item;
+                var quantityInput = button.previousElementSibling;
+                var quantity = parseInt(quantityInput.value);
+                if (quantity > 0) {
+                    addToCart(itemDescription, quantity);
+                    quantityInput.value = '0';
+                }
+            });
+        });
+
+        function addToCart(itemDescription, quantity) {
+            var cartItems = document.getElementById('cart-items');
+            var newItem = document.createElement('li');
+            newItem.classList.add('cart-item');
+            newItem.textContent = itemDescription + ' - Quantidade: ' + quantity;
+            cartItems.appendChild(newItem);
+
+            var cartCount = document.getElementById('cart-count');
+            var currentCount = parseInt(cartCount.textContent);
+            var newCount = currentCount + quantity;
+            cartCount.textContent = newCount;
+        }
+
+        function toggleCart() {
+            var cartItems = document.getElementById('cart-items');
+            var display = cartItems.style.display;
+            if (display === 'none') {
+                cartItems.style.display = 'block';
+            } else {
+                cartItems.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
