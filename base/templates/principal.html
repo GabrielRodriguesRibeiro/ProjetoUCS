@@ -51,7 +51,7 @@
         .item-price {
             flex-grow: 1;
         }
-
+        
         .more-info-link {
             color: blue;
             cursor: pointer;
@@ -147,7 +147,7 @@
         {% for item in itens %}
         <li class="item">
             {% if item.imagem %}
-                <img src="{{ item.imagem.url }}" alt="Imagem do Item">
+                <img src="{{ item.imagem.url }}" alt="Sem Imagem do Item">
             {% endif %}<br>
             <div class="item-details">
                 <div>
@@ -212,6 +212,24 @@
             var currentCount = parseInt(cartCount.textContent);
             var newCount = currentCount + quantity;
             cartCount.textContent = newCount;
+
+            // Enviar solicitação Ajax para atualizar o carrinho no servidor
+            var formData = new FormData();
+            formData.append('itemDescription', itemDescription);
+            formData.append('quantity', quantity);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/atualizar-carrinho', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log('Carrinho atualizado com sucesso!');
+                    } else {
+                        console.error('Ocorreu um erro ao atualizar o carrinho.');
+                    }
+                }
+            };
+            xhr.send(formData);
         }
 
         function toggleCart() {
