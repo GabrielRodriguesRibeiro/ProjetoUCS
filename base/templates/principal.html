@@ -119,6 +119,41 @@
             margin-bottom: 5px;
         }
 
+        .finalize-button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            max-width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .popup-close {
+            text-align: right;
+        }
+
         @media (max-width: 900px) {
             .item {
                 width: calc(33.33% - 20px);
@@ -139,8 +174,9 @@
             <span class="cart-icon">&#128722;</span>
             <span class="cart-count" id="cart-count">0</span>
         </div>
-        <ul id="cart-items" style="display: none;">
-        </ul>
+        <ul id="cart-items" style="display: none;"></ul>
+
+        <button class="finalize-button" onclick="finalizePurchase()">Finalizar Compra</button>
     </div>
     <ul class="item-list">
         {% block content %}
@@ -239,6 +275,21 @@
                 cartItems.style.display = 'block';
             } else {
                 cartItems.style.display = 'none';
+            }
+        }
+
+        function finalizePurchase() {
+            var cartItems = document.getElementById('cart-items');
+            var cartCount = document.getElementById('cart-count');
+            if (parseInt(cartCount.textContent) > 0) {
+                var confirmation = confirm('Deseja finalizar a compra?');
+                if (confirmation) {
+                    cartItems.innerHTML = '';
+                    cartCount.textContent = '0';
+                    alert('Compra finalizada com sucesso!');
+                }
+            } else {
+                alert('Seu carrinho está vazio. Adicione itens antes de finalizar a compra.');
             }
         }
     </script>
