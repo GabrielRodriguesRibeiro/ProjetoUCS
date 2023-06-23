@@ -6,6 +6,7 @@ from base.models import Item
 def principal(request):
     
     itens = Item.objects.all()
+    
     return render(request, 'principal.html', {'itens': itens})
 
 def adicionarItem(request):
