@@ -8,7 +8,7 @@ class Item(models.Model):
     estoque = models.IntegerField(blank=True)
     descricao = models.TextField(blank=True)
     descricao_tecnica = models.TextField(blank=True)
-    imagem = models.ImageField(upload_to='static/imagens/', blank=True)
+    imagem = models.ImageField(upload_to='staticfiles/imagens/', blank=True)
 
     def __str__(self):
         return f"{self.descricao} - {self.cor} - {self.tamanho}"
