@@ -164,8 +164,6 @@ python-json-logger==2.0.4
 python-nvd3==0.15.0
 python-slugify==8.0.1
 pytz==2022.7.1
-pytzdata==2020.1
-pywin32==305
 pywinpty==2.0.10
 PyYAML==6.0
 pyzmq==25.0.0
